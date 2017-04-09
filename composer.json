@@ -2,6 +2,7 @@
     "name": "rugaard/statsfc",
     "description": "StatsFC API",
     "keywords": ["rugaard", "statsfc", "stats", "api", "football"],
+    "homepage": "http://statsfc.com",
     "license": "MIT",
     "type": "project",
     "require": {
