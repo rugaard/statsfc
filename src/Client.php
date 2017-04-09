@@ -61,7 +61,7 @@ class Client
         // Initiate default Client
         $this->client = new GuzzleClient([
             'headers' => [
-                'X-StatsFC-Key' => '96xhSeg41Hr_K_eD5f3O3b6rCSBrzblsDMP4YJ7_', // $apiKey
+                'X-StatsFC-Key' => $apiKey
             ]
         ]);
     }

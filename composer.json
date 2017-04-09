@@ -14,12 +14,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Rugaard\\StatsFC": "src/"
+            "Rugaard\\StatsFC\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Rugaard\\Tests\\": "tests/"
+            "Rugaard\\StatsFC\\Tests\\": "tests/"
         }
     },
     "config": {
