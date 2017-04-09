@@ -1,0 +1,29 @@
+{
+    "name": "rugaard/statsfc",
+    "description": "StatsFC API",
+    "keywords": ["rugaard", "statsfc", "stats", "api", "football"],
+    "license": "MIT",
+    "type": "project",
+    "require": {
+        "php": ">=7.1.0",
+        "tightenco/collect": "^5.3",
+        "guzzlehttp/guzzle": "~6.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~5.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "Rugaard\\StatsFC": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Rugaard\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true
+    }
+}
