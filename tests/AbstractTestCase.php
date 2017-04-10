@@ -6,6 +6,7 @@ namespace Rugaard\StatsFC\Tests;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Handler\MockHandler as GuzzleMockHandler;
 use GuzzleHttp\HandlerStack as GuzzleHandlerStack;
+use GuzzleHttp\Psr7\Response as GuzzleResponse;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Rugaard\StatsFC\StatsFC;
@@ -32,6 +33,13 @@ abstract class AbstractTestCase extends TestCase
     public function setUp()
     {
         $this->statsfc = new StatsFC('test');
+
+        if (method_exists($this, 'getMockedResponse')) {
+            // Mock response from client.
+            $this->statsfc->setClient($this->createMockedGuzzleClient([
+                new GuzzleResponse(200, [], $this->getMockedResponse()),
+            ]));
+        }
     }
 
     /**
