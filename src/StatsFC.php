@@ -305,8 +305,14 @@ class StatsFC extends Client
                         ->setPosition($subItem->position)
                         ->setRole($subItem->role);
 
+                    // If role doesn't exist, we'll add it to our container
+                    // as an empty collection-
+                    if (!array_key_exists($subItem->role, $players)) {
+                        $players[$subItem->role] = collect();
+                    }
+
                     // Add player to team side container.
-                    $players[$subItem->role][] = $player;
+                    $players[$subItem->role]->push($player);
                 }
 
                 // Add team side players to container.

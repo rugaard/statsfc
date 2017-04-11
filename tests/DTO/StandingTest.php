@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Rugaard\StatsFC\Tests\DTO;
 
 use DateTime;
+use Illuminate\Support\Collection;
 use Rugaard\StatsFC\DTO\Competition;
 use Rugaard\StatsFC\DTO\Round;
 use Rugaard\StatsFC\DTO\Standing;
@@ -41,12 +42,15 @@ class StandingTest extends AbstractTestCase
         $this->assertEquals(26, $standing->getWins());
         $this->assertEquals(9, $standing->getDraws());
         $this->assertEquals(3, $standing->getLosses());
+        $this->assertInstanceOf(Collection::class, $standing->getAllGoals());
+        $this->assertEquals(3, $standing->getAllGoals()->count());
         $this->assertEquals(73, $standing->getGoals('for'));
         $this->assertEquals(32, $standing->getGoals('against'));
         $this->assertEquals(41, $standing->getGoals('difference'));
+        $this->assertNull($standing->getGoals('non-existing-goal-type'));
         $this->assertEquals(87, $standing->getPoints());
         $this->assertEquals('top1', $standing->getInfo());
-        $this->assertNull($standing->getNotes());
+        $this->assertEquals('penalised', $standing->getNotes());
 
         /* @var $competition \Rugaard\StatsFC\DTO\Competition */
         $competition = $standing->getCompetition();
@@ -111,7 +115,7 @@ class StandingTest extends AbstractTestCase
                     'difference' => 41,
                     'points' => 87,
                     'info' => 'top1',
-                    'notes' => null,
+                    'notes' => 'penalised',
                 ],
             ]
         ]);
