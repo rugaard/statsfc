@@ -28,19 +28,19 @@ class CompetitionTest extends AbstractTestCase
      */
     public function testCompetitionDTO()
     {
-        // Get all competitions
+        // Get all competitions.
         $result = $this->statsfc->competitions();
 
-        // Grab first competition.
+        /* @var $competition \Rugaard\StatsFC\DTO\Competition */
         $competition = $result->first();
 
         $this->assertInstanceOf(Competition::class, $competition);
-        $this->assertEquals($competition->getId(), 1);
-        $this->assertEquals($competition->getName(), 'Premier League');
-        $this->assertEquals($competition->getKey(), 'EPL');
-        $this->assertEquals($competition->getRegion(), 'England');
+        $this->assertEquals(1, $competition->getId());
+        $this->assertEquals('Premier League', $competition->getName());
+        $this->assertEquals('EPL', $competition->getKey());
+        $this->assertEquals('England', $competition->getRegion());
         $this->assertInstanceOf(Collection::class, $competition->getRounds());
-        $this->assertEquals($competition->getRounds()->count(), 1);
+        $this->assertEquals(1, $competition->getRounds()->count());
         $this->assertInstanceOf(Round::class, $competition->getRounds()->first());
     }
 

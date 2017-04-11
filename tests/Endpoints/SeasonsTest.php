@@ -31,7 +31,7 @@ class SeasonsTest extends AbstractTestCase
         $result = $this->statsfc->seasons();
         
         $this->assertInstanceOf(Collection::class, $result);
-        $this->assertEquals($result->count(), 2);
+        $this->assertEquals(2, $result->count());
         $this->assertInstanceOf(Season::class, $result->first());
     }
 

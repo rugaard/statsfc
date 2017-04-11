@@ -4,18 +4,18 @@ declare(strict_types=1);
 namespace Rugaard\StatsFC\Tests\Endpoints;
 
 use Illuminate\Support\Collection;
-use Rugaard\StatsFC\DTO\State;
+use Rugaard\StatsFC\DTO\TopScorer;
 use Rugaard\StatsFC\Tests\AbstractTestCase;
 
 /**
- * Class StatesTest.
+ * Class TopScorersTest.
  *
  * @package StatsFC\Tests\Endpoints
  */
-class StatesTest extends AbstractTestCase
+class TopScorersTest extends AbstractTestCase
 {
     /**
-     * Test states endpoint.
+     * Test top scorers endpoint.
      *
      * @return void
      * @throws \Rugaard\StatsFC\Exceptions\InvalidResponseBodyException
@@ -25,14 +25,16 @@ class StatesTest extends AbstractTestCase
      * @throws \Rugaard\StatsFC\Exceptions\TooManyRequestsException
      * @throws \Rugaard\StatsFC\Exceptions\UnauthorizedException
      */
-    public function testStatesEndpoint()
+    public function testTopScorersEndpoint()
     {
-        // Get all seasons
-        $result = $this->statsfc->states();
+        // Get all top scorers
+        $result = $this->statsfc->topScorers([
+            'team' => 'Liverpool',
+        ]);
         
         $this->assertInstanceOf(Collection::class, $result);
         $this->assertEquals(2, $result->count());
-        $this->assertInstanceOf(State::class, $result->first());
+        $this->assertInstanceOf(TopScorer::class, $result->first());
     }
 
     /**
@@ -46,13 +48,27 @@ class StatesTest extends AbstractTestCase
             'data' => [
                 [
                     'id' => 1,
-                    'key' => 'HT',
-                    'name' => 'Half-Time',
+                    'team' => [
+                        'name' => 'Liverpool',
+                        'shortName' => 'Liverpool',
+                    ],
+                    'player' => [
+                        'name' => 'Steven Gerrard',
+                        'shortName' => 'Gerrard',
+                    ],
+                    'goals' => 28,
                 ],
                 [
                     'id' => 2,
-                    'key' => 'FT',
-                    'name' => 'Full-Time',
+                    'team' => [
+                        'name' => 'Liverpool',
+                        'shortName' => 'Liverpool',
+                    ],
+                    'player' => [
+                        'name' => 'Philippe Coutinho',
+                        'shortName' => 'Coutinho',
+                    ],
+                    'goals' => 16,
                 ],
             ]
         ]);

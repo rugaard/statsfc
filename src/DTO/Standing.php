@@ -356,7 +356,7 @@ class Standing
      */
     public function getInfo() :? string
     {
-        return $this->info = $info;
+        return $this->info;
     }
 
     /**

@@ -14,7 +14,7 @@ use Rugaard\StatsFC\Tests\AbstractTestCase;
 class StateTest extends AbstractTestCase
 {
     /**
-     * Test competition DTO.
+     * Test state DTO.
      *
      * @return void
      * @throws \Rugaard\StatsFC\Exceptions\InvalidResponseBodyException
@@ -26,16 +26,16 @@ class StateTest extends AbstractTestCase
      */
     public function testStateDTO()
     {
-        // Get all competitions
+        // Get all states.
         $result = $this->statsfc->states();
 
-        // Grab first competition.
+        /* @var $state \Rugaard\StatsFC\DTO\State */
         $state = $result->first();
 
         $this->assertInstanceOf(State::class, $state);
-        $this->assertEquals($state->getId(), 1);
-        $this->assertEquals($state->getKey(), 'HT');
-        $this->assertEquals($state->getName(), 'Half-Time');
+        $this->assertEquals(1, $state->getId());
+        $this->assertEquals('HT', $state->getKey());
+        $this->assertEquals('Half-Time', $state->getName());
     }
 
     /**

@@ -31,7 +31,7 @@ class CompetitionsTest extends AbstractTestCase
         $result = $this->statsfc->competitions();
         
         $this->assertInstanceOf(Collection::class, $result);
-        $this->assertEquals($result->count(), 2);
+        $this->assertEquals(2, $result->count());
         $this->assertInstanceOf(Competition::class, $result->first());
     }
 

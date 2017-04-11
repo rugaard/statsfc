@@ -15,7 +15,7 @@ use Rugaard\StatsFC\Tests\AbstractTestCase;
 class SeasonTest extends AbstractTestCase
 {
     /**
-     * Test competition DTO.
+     * Test season DTO.
      *
      * @return void
      * @throws \Rugaard\StatsFC\Exceptions\InvalidResponseBodyException
@@ -27,19 +27,19 @@ class SeasonTest extends AbstractTestCase
      */
     public function testSeasonDTO()
     {
-        // Get all competitions
+        // Get all seasons.
         $result = $this->statsfc->seasons();
 
-        // Grab first competition.
+        /* @var $season \Rugaard\StatsFC\DTO\Season */
         $season = $result->first();
 
         $this->assertInstanceOf(Season::class, $season);
-        $this->assertEquals($season->getId(), 1);
-        $this->assertEquals($season->getName(), '2015/2016');
+        $this->assertEquals(1, $season->getId());
+        $this->assertEquals('2015/2016', $season->getName());
         $this->assertInstanceOf(DateTime::class, $season->getStart());
-        $this->assertEquals($season->getStart()->format('Y-m-d'), '2015-06-30');
+        $this->assertEquals('2015-06-30', $season->getStart()->format('Y-m-d'));
         $this->assertInstanceOf(DateTime::class, $season->getEnd());
-        $this->assertEquals($season->getEnd()->format('Y-m-d'), '2016-06-30');
+        $this->assertEquals('2016-06-30', $season->getEnd()->format('Y-m-d'));
     }
 
     /**
