@@ -94,11 +94,10 @@ class ResultTest extends AbstractTestCase
         $this->assertArrayHasKey('away', $players);
         $this->assertInstanceOf(Collection::class, $players->last());
 
-        /* @var $homeTeam \Rugaard\StatsFC\DTO\Team */
+        /* @var $homePlayers \Illuminate\Support\Collection */
         $homePlayers = $item->getPlayers('home');
-        var_dump($homePlayers); die;
         $this->assertInstanceOf(Collection::class, $homePlayers);
-        $this->assertEquals(2, $homePlayers->first());
+        $this->assertEquals(2, $homePlayers->get('starting')->count());
 
         /* @var $homePlayer \Rugaard\StatsFC\DTO\Player */
         $homePlayer = $homePlayers->get('starting')->first();
@@ -107,7 +106,21 @@ class ResultTest extends AbstractTestCase
         $this->assertEquals('Daniel Agger', $homePlayer->getName());
         $this->assertEquals('Agger', $homePlayer->getShortName());
         $this->assertEquals('DF', $homePlayer->getPosition());
-        $this->assertEquals('starting', $homePlayer->getPosition());
+        $this->assertEquals('starting', $homePlayer->getRole());
+
+        /* @var $awayPlayers \Illuminate\Support\Collection */
+        $awayPlayers = $item->getPlayers('away');
+        $this->assertInstanceOf(Collection::class, $awayPlayers);
+        $this->assertEquals(2, $awayPlayers->get('starting')->count());
+
+        /* @var $awayPlayer \Rugaard\StatsFC\DTO\Player */
+        $awayPlayer = $awayPlayers->get('starting')->first();
+        $this->assertEquals(12, $awayPlayer->getId());
+        $this->assertEquals(8, $awayPlayer->getNumber());
+        $this->assertEquals('Aaron Ramsey', $awayPlayer->getName());
+        $this->assertEquals('Ramsey', $awayPlayer->getShortName());
+        $this->assertEquals('MF', $awayPlayer->getPosition());
+        $this->assertEquals('starting', $awayPlayer->getRole());
 
         /* @var $state \Rugaard\StatsFC\DTO\State */
         $state = $item->getCurrentState();
