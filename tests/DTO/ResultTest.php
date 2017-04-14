@@ -6,10 +6,15 @@ namespace Rugaard\StatsFC\Tests\DTO;
 use DateTime;
 use Illuminate\Support\Collection;
 use Rugaard\StatsFC\DTO\Competition;
+use Rugaard\StatsFC\DTO\Events\Card;
+use Rugaard\StatsFC\DTO\Events\Goal;
+use Rugaard\StatsFC\DTO\Events\State;
+use Rugaard\StatsFC\DTO\Events\Substitution;
+use Rugaard\StatsFC\DTO\Player;
 use Rugaard\StatsFC\DTO\Round;
 use Rugaard\StatsFC\DTO\Result;
 use Rugaard\StatsFC\DTO\Team;
-use Rugaard\StatsFC\DTO\State;
+use Rugaard\StatsFC\DTO\State as OriginalState;
 use Rugaard\StatsFC\DTO\Venue;
 use Rugaard\StatsFC\Tests\AbstractTestCase;
 
@@ -41,8 +46,12 @@ class ResultTest extends AbstractTestCase
         /* @var $item \Rugaard\StatsFC\DTO\Result */
         $item = $result->first();
         $this->assertInstanceOf(Result::class, $item);
+        $this->assertEquals(1, $item->getId());
         $this->assertInstanceOf(DateTime::class, $item->getTimestamp());
         $this->assertEquals('2017-04-11T20:25:00+0000', $item->getTimestamp()->format('Y-m-d\TH:i:sO'));
+        $this->assertEquals(4, $item->getScore('home'));
+        $this->assertEquals(3, $item->getScore('away'));
+        $this->assertEquals('4 - 3', $item->getFullScore());
 
         /* @var $competition \Rugaard\StatsFC\DTO\Competition */
         $competition = $item->getCompetition();
@@ -70,6 +79,7 @@ class ResultTest extends AbstractTestCase
         $this->assertInstanceOf(Team::class, $teams->first());
         $this->assertArrayHasKey('away', $teams);
         $this->assertInstanceOf(Team::class, $teams->last());
+        $this->assertNull($item->getTeam('non-existing-side'));
 
         /* @var $homeTeam \Rugaard\StatsFC\DTO\Team */
         $homeTeam = $item->getTeam('home');
@@ -93,6 +103,7 @@ class ResultTest extends AbstractTestCase
         $this->assertInstanceOf(Collection::class, $players->first());
         $this->assertArrayHasKey('away', $players);
         $this->assertInstanceOf(Collection::class, $players->last());
+        $this->assertNull($item->getPlayers('non-existing-side'));
 
         /* @var $homePlayers \Illuminate\Support\Collection */
         $homePlayers = $item->getPlayers('home');
@@ -124,7 +135,7 @@ class ResultTest extends AbstractTestCase
 
         /* @var $state \Rugaard\StatsFC\DTO\State */
         $state = $item->getCurrentState();
-        $this->assertInstanceOf(State::class, $state);
+        $this->assertInstanceOf(OriginalState::class, $state);
         $this->assertEquals(5, $state->getId());
         $this->assertEquals('FT', $state->getKey());
         $this->assertEquals('Full-Time', $state->getName());
@@ -135,6 +146,106 @@ class ResultTest extends AbstractTestCase
         $this->assertEquals(6, $venue->getId());
         $this->assertEquals('Anfield Road', $venue->getName());
         $this->assertEquals(54074, $venue->getCapacity());
+
+        /* @var $eventCards \Illuminate\Support\Collection */
+        $eventCards = $item->getEvents('cards');
+        $this->assertInstanceOf(Collection::class, $eventCards);
+        $this->assertEquals(1, $eventCards->count());
+
+        /* @var $eventCard \Rugaard\StatsFC\DTO\Events\Card */
+        $eventCard = $eventCards->first();
+        $this->assertInstanceOf(Card::class, $eventCard);
+        $this->assertEquals(20, $eventCard->getId());
+        $this->assertInstanceOf(DateTime::class, $eventCard->getTimestamp());
+        $this->assertEquals('2017-04-11T20:31:25+0000', $eventCard->getTimestamp()->format('Y-m-d\TH:i:sO'));
+        $this->assertEquals('25\'', $eventCard->getMatchTime());
+        $this->assertEquals('card', $eventCard->getType());
+        $this->assertEquals('first-yellow', $eventCard->getSubType());
+        $this->assertInstanceOf(Team::class, $eventCard->getTeam());
+        $this->assertEquals(3, $eventCard->getTeam()->getId());
+        $this->assertEquals('Liverpool', $eventCard->getTeam()->getName());
+        $this->assertEquals('Liverpool', $eventCard->getTeam()->getShortName());
+        $this->assertInstanceOf(Player::class, $eventCard->getPlayer());
+        $this->assertEquals(9, $eventCard->getPlayer()->getId());
+        $this->assertEquals('Adam Lallana', $eventCard->getPlayer()->getName());
+        $this->assertEquals('Lallana', $eventCard->getPlayer()->getShortName());
+        $this->assertEquals('MF', $eventCard->getPlayer()->getPosition());
+
+        /* @var $eventGoals \Illuminate\Support\Collection */
+        $eventGoals = $item->getEvents('goals');
+        $this->assertInstanceOf(Collection::class, $eventGoals);
+        $this->assertEquals(1, $eventGoals->count());
+
+        /* @var $eventGoal \Rugaard\StatsFC\DTO\Events\Goal */
+        $eventGoal = $eventGoals->first();
+        $this->assertInstanceOf(Goal::class, $eventGoal);
+        $this->assertEquals(25, $eventGoal->getId());
+        $this->assertInstanceOf(DateTime::class, $eventGoal->getTimestamp());
+        $this->assertEquals('2017-04-11T20:31:25+0000', $eventGoal->getTimestamp()->format('Y-m-d\TH:i:sO'));
+        $this->assertEquals('29\'', $eventGoal->getMatchTime());
+        $this->assertEquals('goal', $eventGoal->getType());
+        $this->assertNull($eventGoal->getSubType());
+        $this->assertInstanceOf(Team::class, $eventGoal->getTeam());
+        $this->assertEquals(3, $eventGoal->getTeam()->getId());
+        $this->assertEquals('Liverpool', $eventGoal->getTeam()->getName());
+        $this->assertEquals('Liverpool', $eventGoal->getTeam()->getShortName());
+        $this->assertInstanceOf(Player::class, $eventGoal->getGoalscorer());
+        $this->assertEquals(10, $eventGoal->getGoalscorer()->getId());
+        $this->assertEquals('Daniel Agger', $eventGoal->getGoalscorer()->getName());
+        $this->assertEquals('Agger', $eventGoal->getGoalscorer()->getShortName());
+        $this->assertEquals('DF', $eventGoal->getGoalscorer()->getPosition());
+        $this->assertInstanceOf(Player::class, $eventGoal->getAssist());
+        $this->assertEquals(11, $eventGoal->getAssist()->getId());
+        $this->assertEquals('Steven Gerrard', $eventGoal->getAssist()->getName());
+        $this->assertEquals('Gerrard', $eventGoal->getAssist()->getShortName());
+        $this->assertEquals('MF', $eventGoal->getAssist()->getPosition());
+
+        /* @var $eventStates \Illuminate\Support\Collection */
+        $eventStates = $item->getEvents('states');
+        $this->assertInstanceOf(Collection::class, $eventStates);
+        $this->assertEquals(1, $eventStates->count());
+
+        /* @var $eventState \Rugaard\StatsFC\DTO\Events\State */
+        $eventState = $eventStates->first();
+        $this->assertInstanceOf(State::class, $eventState);
+        $this->assertEquals(30, $eventState->getId());
+        $this->assertInstanceOf(DateTime::class, $eventState->getTimestamp());
+        $this->assertEquals('2017-04-11T20:31:25+0000', $eventState->getTimestamp()->format('Y-m-d\TH:i:sO'));
+        $this->assertEquals('1\'', $eventState->getMatchTime());
+        $this->assertEquals('state', $eventState->getType());
+        $this->assertInstanceOf(OriginalState::class, $eventState->getState());
+        $this->assertEquals(1, $eventState->getState()->getId());
+        $this->assertEquals('1H', $eventState->getState()->getKey());
+        $this->assertEquals('1st Half', $eventState->getState()->getName());
+
+        /* @var $eventSubstitutions \Illuminate\Support\Collection */
+        $eventSubstitutions = $item->getEvents('substitutions');
+        $this->assertInstanceOf(Collection::class, $eventSubstitutions);
+        $this->assertEquals(1, $eventSubstitutions->count());
+
+        /* @var $eventSubstitution \Rugaard\StatsFC\DTO\Events\Substitution */
+        $eventSubstitution = $eventSubstitutions->first();
+        $this->assertInstanceOf(Substitution::class, $eventSubstitution);
+        $this->assertEquals(35, $eventSubstitution->getId());
+        $this->assertInstanceOf(DateTime::class, $eventSubstitution->getTimestamp());
+        $this->assertEquals('2017-04-11T20:31:25+0000', $eventSubstitution->getTimestamp()->format('Y-m-d\TH:i:sO'));
+        $this->assertEquals('60\'', $eventSubstitution->getMatchTime());
+        $this->assertEquals('substitution', $eventSubstitution->getType());
+        $this->assertNull($eventSubstitution->getSubType());
+        $this->assertInstanceOf(Team::class, $eventSubstitution->getTeam());
+        $this->assertEquals(4, $eventSubstitution->getTeam()->getId());
+        $this->assertEquals('Arsenal', $eventSubstitution->getTeam()->getName());
+        $this->assertEquals('Arsenal', $eventSubstitution->getTeam()->getShortName());
+        $this->assertInstanceOf(Player::class, $eventSubstitution->getPlayerOff());
+        $this->assertEquals(12, $eventSubstitution->getPlayerOff()->getId());
+        $this->assertEquals('Aaron Ramsey', $eventSubstitution->getPlayerOff()->getName());
+        $this->assertEquals('Ramsey', $eventSubstitution->getPlayerOff()->getShortName());
+        $this->assertEquals('MF', $eventSubstitution->getPlayerOff()->getPosition());
+        $this->assertInstanceOf(Player::class, $eventSubstitution->getPlayerOn());
+        $this->assertEquals(15, $eventSubstitution->getPlayerOn()->getId());
+        $this->assertEquals('Santiago Cazorla', $eventSubstitution->getPlayerOn()->getName());
+        $this->assertEquals('Cazorla', $eventSubstitution->getPlayerOn()->getShortName());
+        $this->assertEquals('MF', $eventSubstitution->getPlayerOn()->getPosition());
     }
 
     /**
@@ -291,9 +402,9 @@ class ResultTest extends AbstractTestCase
                                 'type' => 'substitution',
                                 'subType' => null,
                                 'team' => [
-                                    'id' => 3,
-                                    'name' => 'Liverpool',
-                                    'shortName' => 'Liverpool',
+                                    'id' => 4,
+                                    'name' => 'Arsenal',
+                                    'shortName' => 'Arsenal',
                                 ],
                                 'playerOff' => [
                                     'id' => 12,

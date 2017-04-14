@@ -41,6 +41,7 @@ class FixtureTest extends AbstractTestCase
         /* @var $fixture \Rugaard\StatsFC\DTO\Fixture */
         $fixture = $result->first();
         $this->assertInstanceOf(Fixture::class, $fixture);
+        $this->assertEquals(1, $fixture->getId());
         $this->assertInstanceOf(DateTime::class, $fixture->getTimestamp());
         $this->assertEquals('2017-04-11T20:25:00+0000', $fixture->getTimestamp()->format('Y-m-d\TH:i:sO'));
 
@@ -84,6 +85,7 @@ class FixtureTest extends AbstractTestCase
         $this->assertInstanceOf(Team::class, $teams->first());
         $this->assertArrayHasKey('away', $teams);
         $this->assertInstanceOf(Team::class, $teams->last());
+        $this->assertNull($fixture->getTeam('non-existing-side'));
 
         /* @var $state \Rugaard\StatsFC\DTO\State */
         $state = $fixture->getCurrentState();
