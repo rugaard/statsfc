@@ -6,6 +6,7 @@ namespace Rugaard\StatsFC;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\ClientInterface as GuzzleClientInterface;
 use GuzzleHttp\Exception\RequestException as GuzzleRequestException;
+use Prophecy\Promise\PromiseInterface;
 use Rugaard\StatsFC\Exceptions\InvalidResponseBodyException;
 use Rugaard\StatsFC\Exceptions\InvalidUrlException;
 use Rugaard\StatsFC\Exceptions\RequestFailedException;
@@ -106,22 +107,28 @@ class Client
                 throw new InvalidResponseBodyException(sprintf('Could not decode response body: %s', json_last_error_msg()), 400);
             }
 
+            return $body;
+        } catch (GuzzleRequestException $e) {
+            // Get status code of exception
+            $statusCode = $e->getResponse() && !($e->getResponse() instanceof PromiseInterface) ? $e->getResponse()->getStatusCode() : 0;
+
             // Handle response errors.
-            switch ($response->getStatusCode()) {
+            switch ($statusCode) {
                 case 401:
+                    $body = json_decode((string) $e->getResponse()->getBody());
                     throw new UnauthorizedException($body->error->message, $body->error->statusCode);
                     break;
                 case 429:
+                    $body = json_decode((string) $e->getResponse()->getBody());
                     throw new TooManyRequestsException($body->error->message, $body->error->statusCode);
                     break;
                 case 503:
+                    $body = json_decode((string) $e->getResponse()->getBody());
                     throw new ServiceUnavailableException($body->error->message, $body->error->statusCode);
                     break;
+                default:
+                    throw new RequestFailedException(sprintf('Request failed: %s', $e->getMessage()), 400, $e);
             }
-
-            return $body;
-        } catch (GuzzleRequestException $e) {
-            throw new RequestFailedException(sprintf('Request failed: %s', $e->getMessage()), 400, $e);
         }
     }
 

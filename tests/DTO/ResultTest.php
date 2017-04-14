@@ -52,6 +52,7 @@ class ResultTest extends AbstractTestCase
         $this->assertEquals(4, $item->getScore('home'));
         $this->assertEquals(3, $item->getScore('away'));
         $this->assertEquals('4 - 3', $item->getFullScore());
+        $this->assertNull($item->getScore('non-existing-side'));
 
         /* @var $competition \Rugaard\StatsFC\DTO\Competition */
         $competition = $item->getCompetition();
@@ -246,6 +247,15 @@ class ResultTest extends AbstractTestCase
         $this->assertEquals('Santiago Cazorla', $eventSubstitution->getPlayerOn()->getName());
         $this->assertEquals('Cazorla', $eventSubstitution->getPlayerOn()->getShortName());
         $this->assertEquals('MF', $eventSubstitution->getPlayerOn()->getPosition());
+
+        /* @var $events \Illuminate\Support\Collection */
+        $events = $item->getAllEvents();
+        $this->assertInstanceOf(Collection::class, $events);
+        $this->assertArrayHasKey('cards', $events);
+        $this->assertArrayHasKey('goals', $events);
+        $this->assertArrayHasKey('states', $events);
+        $this->assertArrayHasKey('substitutions', $events);
+        $this->assertNull($item->getEvents('non-existing-event-type'));
     }
 
     /**
