@@ -1,6 +1,6 @@
 {
     "name": "rugaard/statsfc",
-    "description": "StatsFC API",
+    "description": "This package parses the API available through StatsFC.",
     "keywords": ["rugaard", "statsfc", "api", "football", "stats"],
     "license": "MIT",
     "authors": [
