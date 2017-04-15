@@ -1,10 +1,14 @@
 {
     "name": "rugaard/statsfc",
     "description": "StatsFC API",
-    "keywords": ["rugaard", "statsfc", "stats", "api", "football"],
-    "homepage": "http://statsfc.com",
+    "keywords": ["rugaard", "statsfc", "api", "football", "stats"],
     "license": "MIT",
-    "type": "project",
+    "authors": [
+        {
+            "name": "Morten Rugaard",
+            "email": "morten@rugaard.me"
+        }
+    ],
     "require": {
         "php": ">=7.1.0",
         "tightenco/collect": "^5.3",
